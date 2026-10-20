@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meg's Notes - The Drive</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #809C66;
+    color: white;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+.story-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 65px 25px;
+}
+
+.story-container {
+    max-width: 650px;
+    width: 100%;
+}
+
+.story-label {
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    margin-bottom: 16px;
+}
+
+.story-container h1 {
+    font-size: 29px;
+    font-weight: 500;
+    margin: 0 0 24px;
+}
+
+.story-container p {
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 22px;
+}
+
+/* Arrow navigation */
+
+.arrow-button {
+    position: fixed;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.arrow-icon {
+    width: 29px;
+    height: 29px;
+    object-fit: contain;
+}
+
+.arrow-button:hover {
+    transform: scale(1.08);
+    opacity: 0.8;
+}
+
+.arrow-button:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.arrow-back {
+    top: 20px;
+    left: 20px;
+}
+
+.arrow-next {
+    right: 20px;
+    bottom: 20px;
+}
+
+/* Message notification popup */
+
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.42);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-paper {
+    position: relative;
+    width: min(380px, 100%);
+    min-height: 245px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 45px 32px 30px;
+    background-image: url("paper-home.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #343329;
+    transform: translateY(15px) scale(0.98);
+    transition: transform 0.3s ease;
+}
+
+.popup-overlay.show .popup-paper {
+    transform: translateY(0) scale(1);
+}
+
+.popup-content {
+    width: 100%;
+    text-align: center;
+}
+
+.popup-label {
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #77704f;
+}
+
+.popup-content h2 {
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 500;
+    margin: 0 0 12px;
+}
+
+.popup-content p {
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 0 0 18px;
+}
+
+.popup-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.popup-action {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.popup-action:hover {
+    opacity: 0.75;
+    transform: translateY(-1px);
+}
+
+.popup-primary {
+    padding: 9px 15px;
+    background: #809C66;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.popup-secondary {
+    padding: 5px;
+    background: transparent;
+    border: none;
+    color: #514d3d;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .arrow-icon {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+@media (max-width: 500px) {
+    .story-section {
+        padding: 65px 22px;
+    }
+
+    .story-container h1 {
+        font-size: 26px;
+    }
+
+    .story-container p {
+        font-size: 13px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .story-label {
+        font-size: 9px;
+    }
+
+    .arrow-back {
+        top: 12px;
+        left: 12px;
+    }
+
+    .arrow-next {
+        right: 12px;
+        bottom: 12px;
+    }
+
+    .popup-paper {
+        min-height: 230px;
+        padding: 40px 27px 27px;
+    }
+
+    .popup-content h2 {
+        font-size: 18px;
+    }
+
+    .popup-content p {
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Back arrow -->
+<a href="thedrive.html"
+   class="arrow-button arrow-back"
+   aria-label="Back to The Drive">
+    <img src="arrow-back.png" class="arrow-icon" alt="">
+</a>
+
+<!-- Next arrow -->
+<a href="messages-2.html"
+   class="arrow-button arrow-next"
+   aria-label="Continue to messages">
+    <img src="arrow-next.png" class="arrow-icon" alt="">
+</a>
+
+<section class="story-section">
+    <div class="story-container">
+
+        <div class="story-label">MEG'S THOUGHTS</div>
+        <h1>What I found</h1>
+
+        <p>
+            I think I'm starting to understand what Dad was trying to show me.
+            MzanziConnect might be more than just a social media platform.
+            Everything I've found on the Drive has been removed or hidden by IT.
+            What if IT isn't only controlling what people see, but also what they
+            remember? Languages, songs, stories, photographs and knowledge that
+            have been passed down for generations.
+        </p>
+
+        <p>
+            It’s almost like they're not just removing information, but slowly
+            removing parts of people's history and identity too. They make one
+            way of understanding the world seem more important than everything
+            else. If people can't find or remember these things anymore,
+            eventually they might stop seeing them as important.
+        </p>
+
+        <p>
+            Dad must have realised this and created the Drive. He tried to expose
+            IT, and they took him before he could. But I think Dad knew there was
+            more to knowledge than what IT wanted people to believe. It seems
+            like the Mrs. W's have been protecting the things IT tried to erase
+            in my father's absence.
+        </p>
+
+        <p>
+            I'm starting to understand why Charles has been changing too. He seems
+            more willing to accept what IT tells him, and I wonder if it's
+            because he hasn't been given a reason to question it. Maybe that's
+            why he's been pulling away from the things our family has always
+            valued. I'm worried that the more he trusts IT, the harder it'll
+            become for him to recognise the parts of himself that don't fit its
+            version of the world. I still want to find Dad, but I think I'm
+            starting to understand that this is bigger than him. I need to save
+            Charles too.
+        </p>
+
+        <p>
+            I've always felt like I don't quite fit in, and maybe I've been
+            looking at that the wrong way. Maybe part of it comes from not fully
+            understanding my own history and where I come from. The more I find,
+            the more I wonder how much of that has been hidden from me too.
+        </p>
+
+        <p>
+            I don't know if I'm right yet. But if I am, then finding Dad might
+            be about more than bringing him home. Maybe it's also about finding
+            out who we are before someone else decides that for us.
+        </p>
+
+    </div>
+</section>
+
+<!-- Message notification popup -->
+<div class="popup-overlay"
+     id="messagePopup"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="popupTitle"
+     aria-describedby="popupDescription">
+
+    <div class="popup-paper">
+        <div class="popup-content">
+
+            <div class="popup-label">NEW MESSAGE</div>
+
+            <h2 id="popupTitle">Ma Which has messaged you</h2>
+
+            <p id="popupDescription">
+                You've received a message from <i>Ma Which</i> this time.
+                Are you ready to see what she has to say?
+            </p>
+
+            <div class="popup-actions">
+                <a href="messages-2.html"
+                   class="popup-action popup-primary">
+                    Go to next page
+                </a>
+
+                <button type="button"
+                        class="popup-action popup-secondary"
+                        id="dismissPopup">
+                    Not done reading
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+const messagePopup = document.getElementById('messagePopup');
+const dismissPopup = document.getElementById('dismissPopup');
+
+let popupShown = false;
+
+function checkPageBottom() {
+    const scrollPosition = window.scrollY + window.innerHeight;
+    const pageHeight = document.documentElement.scrollHeight;
+
+    if (!popupShown && scrollPosition >= pageHeight - 10) {
+        popupShown = true;
+        messagePopup.classList.add('show');
+    }
+}
+
+window.addEventListener('scroll', checkPageBottom, {
+    passive: true
+});
+
+window.addEventListener('load', checkPageBottom);
+
+dismissPopup.addEventListener('click', function () {
+    messagePopup.classList.remove('show');
+});
+
+messagePopup.addEventListener('click', function (event) {
+    if (event.target === messagePopup) {
+        messagePopup.classList.remove('show');
+    }
+});
+</script>
+
+</body>
+</html>

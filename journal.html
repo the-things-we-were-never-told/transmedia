@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meg's Journal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --paper: #eee6d5;
+    --paper-light: #f5efdf;
+    --ink: #29271f;
+    --muted: #797364;
+    --accent: #875744;
+    --radius: 12px;
+    --line: rgba(41, 39, 31, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+}
+
+.journal {
+    width: 100%;
+    min-height: 100vh;
+    padding: 35px clamp(20px, 5vw, 76px) 70px;
+}
+
+.journal-header {
+    padding: 12px 0 28px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.journal-label {
+    margin: 0 0 14px;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+.journal-subtitle {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+.entries {
+    width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.entry {
+    min-height: 90vh;
+    padding: 45px clamp(10px, 3vw, 38px) 75px;
+    margin-bottom: 0;
+    scroll-margin-top: 20px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.entry + .entry {
+    border-top: 1px solid var(--line);
+}
+
+.entry-meta {
+    display: none;
+}
+
+.entry h2 {
+    margin: 0 0 30px;
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(27px, 4vw, 39px);
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.entry-content {
+    max-width: 760px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 2;
+}
+
+.entry-content p {
+    margin: 0 0 23px;
+    font-weight: 400;
+}
+
+.signature {
+    margin-top: 36px;
+    font-family: 'Special Elite', cursive;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.entry-end {
+    margin-top: 55px;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .journal {
+        padding: 24px 18px 45px;
+    }
+
+    .journal-header {
+        margin-bottom: 0;
+        padding-bottom: 24px;
+    }
+
+    .entry {
+        min-height: auto;
+        padding: 35px 4px 55px;
+        margin-bottom: 0;
+    }
+
+    .entry-content {
+        font-size: 14px;
+        line-height: 1.9;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main class="journal">
+
+    <header class="journal-header">
+        <h1>Meg's Journal</h1>
+    </header>
+
+    <div class="entries">
+
+        <article class="entry" id="entry-1">
+            <h2>Entry 1 — 22 March</h2>
+
+            <div class="entry-content">
+                <p>
+I hate it when people ask me to tell them about myself. I never know where to start. My name? My age? What school I go to? Those things tell you the basics, but they don't really explain much about who I am. </p><p>
+Being Coloured and growing up in South Africa, I've started wondering how much I actually know about my own history. At school, we learn so much about Western history and science. Dad loved science so I'm not saying any of that is useless. I love learning about it too. But why does it feel like those are the only things people take seriously? Why is that knowledge considered important, while other kinds of knowledge barely get mentioned? </p><p>
+I know where I come from, but there are parts of my culture that I couldn't explain properly if someone asked me to. I don't think I've ever really questioned that before. You assume you'll learn these things as you grow up, but what happens when certain parts of your history are never taught in the first place? </p><p>
+I wish Dad was here because he'd probably have something useful to say. Or he'd tell me to stop overthinking and actually go find the answers myself. Honestly, he'd probably do both. I just wish I could ask him where to start
+
+            </div>
+
+            <p class="signature">Meg</p>
+        </article>
+
+        <article class="entry" id="entry-2">
+            <h2>Entry 2 — 15 July</h2>
+
+            <div class="entry-content">
+                <p>
+I've been thinking about Dad a lot lately. More than usual, actually. I miss talking to him about random things. He could make almost anything interesting, even when I had absolutely no idea what he was talking about. He always encouraged me to ask questions, even if they were stupid. Especially if they were stupid, apparently. </p><p>
+There's so much I want to ask him now.</p><p>
+I've still wondering about our family and where we come from. Not just names and dates but actual things. What our grandparents were like when they were younger. What traditions they grew up with. What they believed in. What things were important to them that we don't really do anymore.</p><p>
+I asked Ma once about some of our older family traditions, and she told me what she could remember. I kept asking questions and eventually we reached a point where neither of us knew the answers. That bothered me more than I expected. How can something belong to you and still feel like a mystery?
+                </p>
+            </div>
+
+            <p class="signature">Meg</p>
+        </article>
+
+        <article class="entry" id="entry-3">
+            <h2>Entry 3 — 6 November</h2>
+
+            <div class="entry-content">
+                <p>
+                 Charles has been acting differently lately. I know he's getting older and people change, but lately it feels like he's embarrassed by things he never used to care about. He's been listening to different music, talking about things he sees online, and going on about how people overseas do things better. The other day, he called one of our family traditions old-fashioned. He laughed afterwards like it was nothing, and I kept thinking about it.
+I don't think he meant to upset me. I don't think he even understands why it bothered me so much. It's not that I have a problem with him liking things from other countries. I do too. I watch American movies and listen to music from overseas, so it's not like I'm against any of that.</p><p>
+
+But lately, it feels like he sees those things as better than what we have here. Like knowing more about other people's lives makes you smarter or more successful, and our own traditions are something to grow out of. I hate thinking that he might be starting to see our cultural identity that way, especially when there's already so much about it that I feel like I don't know enough about. </p><p>
+Maybe I'm being dramatic and he's just going through a phase. Ma says I shouldn't take everything he says so personally, but it's hard not to when it's about something I'm still trying to understand myself. I don't want Charles to feel like he has to give up parts of who he is just to fit in. At the same time I don't want to be that annoying older sister who acts like he's not allowed to change or think for himself.</p><p>
+I just worry that he'll grow up believing our history doesn't matter because nobody around him seems to treat it like it does. I don't know how to explain that to him without sounding like I'm giving him a lecture. And the truth is, I haven't figured everything out myself either. I guess that's part of what bothers me. How can I tell him not to dismiss something when I'm still trying to understand it myself?
+
+                </p>
+            </div>
+
+            <p class="signature">Meg</p>
+        </article>
+
+    </div>
+</main>
+
+</body>
+</html>

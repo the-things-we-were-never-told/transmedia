@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meg's Desktop</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.desktop {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #222 url("wallpaper.png") center center / cover no-repeat;
+}
+
+.desktop-icons {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+    z-index: 1;
+}
+
+.desktop-icon {
+    width: 94px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.desktop-icon img {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    display: block;
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform 0.18s ease;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+}
+
+.desktop-icon:hover img {
+    transform: scale(1.14);
+}
+
+.desktop-icon:active img {
+    transform: scale(1.04);
+}
+
+.desktop-icon span {
+    max-width: 94px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+    overflow-wrap: break-word;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    user-select: none;
+}
+
+.app-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(1100px, calc(100% - 180px));
+    height: min(760px, calc(100% - 70px));
+    min-width: 320px;
+    min-height: 250px;
+    display: none;
+    flex-direction: column;
+    background: #f7f7f7;
+    border-radius: 9px;
+    overflow: hidden;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+    transform: translate(-50%, -47%) scale(0.94);
+    opacity: 0;
+    z-index: 10;
+}
+
+.app-window.open {
+    display: flex;
+    animation: windowOpen 0.28s cubic-bezier(0.2, 0.75, 0.3, 1) forwards;
+}
+
+.app-window.closing {
+    display: flex;
+    animation: windowClose 0.18s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes windowOpen {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -47%) scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes windowClose {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -47%) scale(0.95);
+    }
+}
+
+.window-titlebar {
+    height: 42px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
+    background: #f3f3f3;
+    border-bottom: 1px solid #dedede;
+    color: #222;
+    user-select: none;
+}
+
+.window-title {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.window-controls {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.window-control {
+    width: 42px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: #333;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.window-control:hover {
+    background: #e2e2e2;
+}
+
+.window-control.close:hover {
+    background: #c42b1c;
+    color: white;
+}
+
+.window-content {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: white;
+}
+
+.window-content iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+}
+
+.app-window.maximised {
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    border-radius: 0;
+}
+
+.recycle-content {
+    display: none;
+    flex: 1;
+    background: white;
+    color: #222;
+    padding: 30px;
+    font-size: 14px;
+}
+
+.recycle-content.visible {
+    display: block;
+}
+
+@media (max-width: 700px) {
+    .desktop-icons {
+        top: 16px;
+        left: 12px;
+        gap: 20px;
+    }
+
+    .desktop-icon {
+        width: 82px;
+    }
+
+    .desktop-icon img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .desktop-icon span {
+        font-size: 11px;
+    }
+
+    .app-window {
+        width: calc(100% - 20px);
+        height: calc(100% - 30px);
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .window-control {
+        width: 35px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .desktop-icon img {
+        transition: none;
+    }
+
+    .app-window.open,
+    .app-window.closing {
+        animation: none;
+    }
+
+    .app-window.open {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="desktop">
+
+<div class="desktop-icons">
+
+    <button class="desktop-icon" type="button"
+            onclick="openApp('recycle')">
+        <img src="bin-app.png" alt="">
+        <span>Recycle Bin</span>
+    </button>
+
+    <button class="desktop-icon" type="button"
+            onclick="openApp('journal')">
+        <img src="journal-app.png" alt="">
+        <span>Meg's Journal</span>
+    </button>
+
+    <button class="desktop-icon" type="button"
+            onclick="openApp('mzanzi')">
+        <img src="mzanziconnect-app.png" alt="">
+        <span>MzanziConnect</span>
+    </button>
+
+</div>
+
+<section class="app-window" id="recycle-window"
+         aria-label="Recycle Bin window">
+
+    <div class="window-titlebar">
+        <span class="window-title">Recycle Bin</span>
+
+        <div class="window-controls">
+            <button class="window-control" type="button"
+                    onclick="minimiseApp('recycle')"
+                    aria-label="Minimise">−</button>
+
+            <button class="window-control" type="button"
+                    onclick="maximiseApp('recycle')"
+                    aria-label="Maximise">□</button>
+
+            <button class="window-control close" type="button"
+                    onclick="closeApp('recycle')"
+                    aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <div class="recycle-content visible">
+        <p>The Recycle Bin is empty.</p>
+    </div>
+
+</section>
+
+<section class="app-window" id="journal-window"
+         aria-label="Meg's Journal window">
+
+    <div class="window-titlebar">
+        <span class="window-title">Meg's Journal</span>
+
+        <div class="window-controls">
+            <button class="window-control" type="button"
+                    onclick="minimiseApp('journal')"
+                    aria-label="Minimise">−</button>
+
+            <button class="window-control" type="button"
+                    onclick="maximiseApp('journal')"
+                    aria-label="Maximise">□</button>
+
+            <button class="window-control close" type="button"
+                    onclick="closeApp('journal')"
+                    aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <div class="window-content">
+        <iframe src="journal.html" title="Meg's Journal"></iframe>
+    </div>
+
+</section>
+
+<section class="app-window" id="mzanzi-window"
+         aria-label="MzanziConnect window">
+
+    <div class="window-titlebar">
+        <span class="window-title">MzanziConnect</span>
+
+        <div class="window-controls">
+            <button class="window-control" type="button"
+                    onclick="minimiseApp('mzanzi')"
+                    aria-label="Minimise">−</button>
+
+            <button class="window-control" type="button"
+                    onclick="maximiseApp('mzanzi')"
+                    aria-label="Maximise">□</button>
+
+            <button class="window-control close" type="button"
+                    onclick="closeApp('mzanzi')"
+                    aria-label="Close">×</button>
+        </div>
+    </div>
+
+    <div class="window-content">
+        <iframe src="mzanziconnect.html"
+                title="MzanziConnect"></iframe>
+    </div>
+
+</section>
+
+</div>
+
+<script>
+const appNames = ["recycle", "journal", "mzanzi"];
+const closeTimers = {};
+
+function getWindow(app) {
+    return document.getElementById(app + "-window");
+}
+
+function bringToFront(app) {
+    appNames.forEach(name => {
+        const win = getWindow(name);
+        if (win) {
+            win.style.zIndex = name === app ? "20" : "10";
+        }
+    });
+}
+
+function openApp(app) {
+    const win = getWindow(app);
+    if (!win) return;
+
+    clearTimeout(closeTimers[app]);
+
+    if (win.classList.contains("open")) {
+        bringToFront(app);
+        return;
+    }
+
+    win.classList.remove("closing");
+    win.classList.remove("maximised");
+
+    win.style.display = "none";
+    void win.offsetWidth;
+    win.style.display = "";
+
+    win.classList.add("open");
+    bringToFront(app);
+}
+
+function closeApp(app) {
+    const win = getWindow(app);
+    if (!win) return;
+
+    win.classList.remove("open");
+    win.classList.add("closing");
+
+    clearTimeout(closeTimers[app]);
+
+    closeTimers[app] = setTimeout(() => {
+        win.classList.remove("closing");
+        win.style.display = "none";
+        win.classList.remove("maximised");
+        win.style.top = "50%";
+        win.style.left = "50%";
+    }, 180);
+}
+
+function minimiseApp(app) {
+    const win = getWindow(app);
+    if (!win) return;
+
+    win.classList.remove("open");
+    win.style.display = "none";
+}
+
+function maximiseApp(app) {
+    const win = getWindow(app);
+    if (!win) return;
+
+    win.classList.toggle("maximised");
+}
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        appNames.forEach(app => {
+            const win = getWindow(app);
+            if (win && win.classList.contains("open")) {
+                closeApp(app);
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

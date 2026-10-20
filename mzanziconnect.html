@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MzanziConnect | Feed</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+:root {
+    --background: #d0c0b6;
+    --header: #171717;
+    --card: #FBF6F1;
+    --text: #191919;
+    --muted: #858580;
+    --accent: #a92b2b;
+    --hashtag: #1769aa;
+    --button-green: #89a15b;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--background) url("app-bg.png") center center / cover fixed no-repeat;
+    color: var(--text);
+    font-size: 14px;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+header {
+    min-height: 78px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--header);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 55px;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    text-decoration: none;
+    color: white;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.logo-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.logo-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 900;
+}
+
+.logo-text .logo-connect {
+    font-weight: 900;
+}
+
+.header-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.header-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.header-links a:hover {
+    color: #d0c0b6;
+}
+
+.header-links a[aria-current="page"] {
+    color: #d0c0b6;
+    border-bottom: 2px solid #d0c0b6;
+    padding-bottom: 6px;
+}
+
+/* Messages image button */
+.messages-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.messages-link img {
+    display: block;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    transition: transform .2s ease;
+}
+
+.messages-link:hover img {
+    transform: scale(1.1);
+}
+
+.messages-link::after {
+    content: "Messages";
+    position: absolute;
+    top: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #FBF6F1;
+    color: #191919;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 7px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+}
+
+.messages-link:hover::after,
+.messages-link:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Main page layout */
+.page-container {
+    width: min(1120px, calc(100% - 48px));
+    margin: 48px auto 50px;
+    display: grid;
+    grid-template-columns: minmax(0, 790px) 294px;
+    gap: 36px;
+    align-items: start;
+}
+
+.main-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Cards */
+.card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: none;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 18px rgba(30, 20, 15, 0.16);
+    transform: translateY(-2px);
+}
+
+.card h1,
+.card h2,
+.card h3,
+.card p {
+    margin-top: 0;
+}
+
+.card h1,
+.card h2,
+.feed-section-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -.4px;
+}
+
+.card h1 {
+    margin-bottom: 9px;
+}
+
+.card h2 {
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.card p {
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.intro-card p {
+    margin-bottom: 0;
+}
+
+/* Welcome description and context book */
+.intro-heading {
+    margin-bottom: 9px;
+}
+
+.intro-heading h1 {
+    margin: 0;
+}
+
+.intro-description-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.intro-description-row p {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.intro-context {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+}
+
+/* Post header */
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 17px;
+}
+
+.avatar,
+.feed-avatar {
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.post-name {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.post-location {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.feed-post .post-location {
+    font-size: 12px;
+}
+
+.post-content p {
+    margin-bottom: 14px;
+}
+
+/* Post images */
+.post-image {
+    height: 260px;
+    background: #858580;
+    border-radius: 10px;
+    margin: 24px 4px 18px;
+    width: calc(100% - 8px);
+    overflow: hidden;
+}
+
+.post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.post-image.meg-post-image {
+    width: min(100%, 380px);
+    height: auto;
+    margin: 20px 0 18px;
+    background: transparent;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.post-image.meg-post-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: left center;
+    border-radius: 12px;
+}
+
+.post-image.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+}
+
+/* Like, comment and share buttons */
+.post-actions,
+.feed-post-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 12px 0;
+}
+
+.post-actions {
+    border-bottom: 1px solid #e8e5e2;
+}
+
+.post-actions button,
+.feed-post-actions button {
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    background: none;
+    color: #555;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 5px 0;
+    transition: color .2s ease;
+}
+
+.post-actions button:hover,
+.feed-post-actions button:hover {
+    color: var(--accent);
+}
+
+.action-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.feed-action-icon {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* Comments */
+.comments {
+    padding-top: 17px;
+}
+
+.comment {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    transition: transform .2s ease;
+}
+
+.comment:hover {
+    transform: translateY(-2px);
+}
+
+.comment-avatar {
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    background: #d0c0b6;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.comment-body {
+    background: #f4f1ef;
+    border-radius: 8px;
+    padding: 10px 12px;
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    transition: background .2s ease, box-shadow .2s ease;
+}
+
+.comment:hover .comment-body {
+    background: #eee7e1;
+    box-shadow: 0 4px 12px rgba(30, 20, 15, 0.10);
+}
+
+.comment-body strong {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.comment-body p {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 5px 0 0;
+}
+
+.account-trust-low {
+    display: inline-block;
+    margin-top: 7px;
+    color: #a92b2b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .2px;
+}
+
+/* Ma Who comment and context icon */
+.comment-body-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.comment-body-header strong {
+    padding-top: 3px;
+}
+
+.comment-context {
+    width: 34px;
+    height: 34px;
+}
+
+/* Comment input and circular send button */
+.comment-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.comment-input {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #ded7d1;
+    border-radius: 9px;
+    background: #fffdfa;
+    color: #191919;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.comment-input::placeholder {
+    color: #99918a;
+}
+
+.comment-input:focus {
+    border-color: #171717;
+    box-shadow: 0 0 0 3px rgba(23, 23, 23, .12);
+}
+
+.post-comment-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    margin: 0;
+    background: #d0c0b6;
+    color: #191919;
+    border: 1px solid #c1afa3;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.post-comment-button svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.post-comment-button:hover {
+    background: #c1afa3;
+    transform: translateY(-1px);
+}
+
+.post-comment-button:active {
+    transform: translateY(1px);
+}
+
+.post-comment-button:focus-visible {
+    outline: 3px solid rgba(23, 23, 23, .25);
+    outline-offset: 3px;
+}
+
+/* Account status */
+.status-card h2 {
+    margin-bottom: 14px;
+}
+
+.status-card p {
+    margin-bottom: 10px;
+}
+
+.status-card p:last-child {
+    margin-bottom: 0;
+}
+
+.low-trust {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.medium-trust {
+    color: #a16a3c;
+    font-weight: 700;
+}
+
+.sidebar-card h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.sidebar-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #e8e5e2;
+}
+
+.sidebar-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.sidebar-item strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.sidebar-item p {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
+/* Notices */
+.notice {
+    background: #f5f1ed;
+    border-left: 3px solid var(--accent);
+    padding: 13px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.notice strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+a {
+    color: inherit;
+}
+
+.text-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.text-link:hover {
+    text-decoration: underline;
+}
+
+/* Mzanzi feed */
+.feed-section-title {
+    margin: 0 0 16px;
+}
+
+.feed-post {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 22px 25px;
+    margin-bottom: 18px;
+    box-shadow: none;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.feed-post:hover {
+    box-shadow: 0 5px 18px rgba(30, 20, 15, 0.16);
+    transform: translateY(-2px);
+}
+
+.feed-post:last-child {
+    margin-bottom: 0;
+}
+
+.feed-post-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.feed-post-heading > div {
+    flex: 1;
+    min-width: 0;
+}
+
+.feed-post-heading h3 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.feed-symbol {
+    color: #a16a3c;
+    font-size: 14px;
+}
+
+/* Slanted sticker-style status labels */
+.feed-status {
+    display: inline-block;
+    flex-shrink: 0;
+    margin-left: 3px;
+    padding: 5px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    line-height: 1.2;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    border-radius: 2px;
+    transform: rotate(-5deg);
+    transform-origin: center;
+    box-shadow: 1px 2px 0 rgba(0, 0, 0, .12);
+    position: relative;
+    top: -1px;
+}
+
+.feed-status.promoted {
+    background: #dce9d4;
+    color: #3f6837;
+    border: 1px solid #b7cda9;
+}
+
+.feed-status.flagged {
+    background: #f3d8d5;
+    color: #a92b2b;
+    border: 1px solid #dfb4af;
+    transform: rotate(4deg);
+}
+
+.feed-status.removed {
+    background: #e4ddd7;
+    color: #655b54;
+    border: 1px solid #c9beb5;
+    transform: rotate(-4deg);
+}
+
+.feed-flag,
+.feed-promoted {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 999px;
+    letter-spacing: .2px;
+}
+
+.feed-flag {
+    background: #f7e7e5;
+    color: #a92b2b;
+}
+
+.feed-promoted {
+    background: #eaf1e5;
+    color: #47733e;
+}
+
+.feed-post p {
+    color: #48413c;
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+}
+
+/* Blue hashtags */
+.hashtag {
+    color: var(--hashtag);
+    text-decoration: none;
+}
+
+.hashtag:hover {
+    text-decoration: underline;
+}
+
+/* Feed action row - no horizontal line underneath */
+.feed-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 5px 0 10px;
+}
+
+.feed-actions-row .feed-post-actions {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 0;
+    padding: 10px 0;
+    border-bottom: none;
+}
+
+.react-btn {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 3px 0;
+    color: #655b54;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: color .15s;
+}
+
+.react-btn:hover,
+.react-btn:focus-visible {
+    color: var(--accent);
+}
+
+/* Context book icons */
+.context-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 2px;
+    margin: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.context-toggle img {
+    display: block;
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    transition: transform .2s ease;
+}
+
+.context-toggle:hover img,
+.context-toggle:focus-visible img,
+.context-toggle[aria-expanded="true"] img {
+    transform: scale(1.08);
+}
+
+.context-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Context dropdown with divider */
+.context-box {
+    background: transparent;
+    border: none;
+    border-top: 1px solid #e1d8d1;
+    padding: 12px 0 0;
+    margin: 0;
+    border-radius: 0;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transform-origin: top left;
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition:
+        opacity .22s ease,
+        transform .22s ease,
+        max-height .3s ease,
+        margin-top .25s ease,
+        visibility .22s ease;
+}
+
+.context-box:not(.hidden) {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 260px;
+    margin-top: 10px;
+    pointer-events: auto;
+}
+
+.context-box p {
+    font-size: 12px;
+    line-height: 1.55;
+    margin: 0;
+    color: #655b54;
+}
+
+.hidden {
+    display: none;
+}
+
+.context-box.hidden {
+    display: block;
+}
+
+.intro-card .context-box {
+    margin-top: 0;
+}
+
+.intro-card .context-box:not(.hidden) {
+    margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .context-box,
+    .card,
+    .feed-post,
+    .comment,
+    .comment-body,
+    .post-comment-button,
+    .messages-link img,
+    .context-toggle img {
+        transition: none;
+        transform: none;
+    }
+}
+
+/* Messages arrow */
+#messages-arrow {
+    position: fixed;
+    top: 72px;
+    right: 70px;
+    z-index: 1100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    pointer-events: none;
+    transform: rotate(-8deg);
+}
+
+#messages-arrow img {
+    display: block;
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+#messages-arrow.visible {
+    display: flex;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 22px;
+    color: #5d514b;
+    font-size: 11px;
+}
+
+/* Tablet */
+@media (max-width: 1050px) {
+    .page-container {
+        width: calc(100% - 40px);
+        grid-template-columns: minmax(0, 1fr) 250px;
+        gap: 24px;
+    }
+
+    header {
+        padding: 0 30px;
+    }
+
+    .card {
+        padding: 22px;
+    }
+
+    .feed-post {
+        padding: 20px 22px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+    header {
+        min-height: 70px;
+        padding: 0 18px;
+    }
+
+    .logo {
+        font-size: 19px;
+        gap: 7px;
+    }
+
+    .logo-icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .header-links {
+        gap: 13px;
+    }
+
+    .header-links a {
+        font-size: 12px;
+    }
+
+    .messages-link img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .page-container {
+        width: calc(100% - 24px);
+        margin: 22px auto 35px;
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .main-feed {
+        gap: 22px;
+    }
+
+    .sidebar {
+        order: -1;
+    }
+
+    .card,
+    .feed-post {
+        padding: 18px;
+    }
+
+    .card h1,
+    .card h2,
+    .feed-section-title {
+        font-size: 19px;
+    }
+
+    .card p,
+    .feed-post p {
+        font-size: 13px;
+    }
+
+    .intro-description-row {
+        gap: 8px;
+    }
+
+    .intro-description-row p {
+        font-size: 15px;
+    }
+
+    .intro-context {
+        width: 40px;
+        height: 40px;
+    }
+
+    .post-image {
+        height: 210px;
+    }
+
+    .post-image.meg-post-image {
+        width: min(100%, 320px);
+        height: auto;
+        margin: 18px 0;
+        border-radius: 10px;
+    }
+
+    .post-image.meg-post-image img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        border-radius: 10px;
+    }
+
+    .feed-actions-row {
+        gap: 8px;
+    }
+
+    .feed-actions-row .feed-post-actions {
+        gap: 12px;
+    }
+
+    .feed-action-icon {
+        width: 15px;
+        height: 15px;
+        margin-right: 4px;
+    }
+
+    .context-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .context-toggle img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .comment-form {
+        gap: 8px;
+    }
+
+    .comment-input,
+    .post-comment-button {
+        height: 40px;
+    }
+
+    .post-comment-button {
+        width: 40px;
+    }
+
+    #messages-arrow {
+        top: 62px;
+        right: 10px;
+    }
+
+    #messages-arrow img {
+        width: 68px;
+        height: 68px;
+    }
+}
+
+@media (max-width: 420px) {
+    .logo {
+        font-size: 16px;
+        letter-spacing: -.8px;
+    }
+
+    .logo-icon {
+        width: 23px;
+        height: 23px;
+    }
+
+    .header-links {
+        gap: 8px;
+    }
+
+    .feed-actions-row .feed-post-actions {
+        gap: 9px;
+    }
+
+    .feed-actions-row .react-btn {
+        font-size: 11px;
+    }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <div class="logo" aria-label="MzanziConnect">
+        <img class="logo-icon" src="mzanziconnect-app.png" alt="">
+        <span class="logo-text"><span>MZANZI</span><span class="logo-connect">CONNECT</span></span>
+    </div>
+
+    <nav class="header-links">
+        <a href="mzanziconnect.html" aria-current="page">Home</a>
+        <a href="messages.html" class="messages-link" aria-label="Messages">
+            <img src="messages.png" alt="Messages">
+        </a>
+    </nav>
+</header>
+
+<div class="page-container">
+    <main class="main-feed">
+
+        <section class="card intro-card">
+            <div class="intro-heading">
+                <h1>Welcome to MzanziConnect</h1>
+            </div>
+
+            <div class="intro-description-row">
+                <p>A digital platform for news, entertainment, education and communication.</p>
+                <button class="context-toggle intro-context" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                    <img src="book-closed.png" alt="">
+                </button>
+            </div>
+
+            <div class="context-box hidden">
+                <p><strong>CONTEXT:</strong> MzanziConnect is this adaptation’s version of Camazotz: a platform controlled by IT that promotes conformity while hiding alternative perspectives.</p>
+            </div>
+        </section>
+
+        <!-- Meg's original post -->
+        <article class="card">
+            <div class="post-header">
+                <img class="avatar" src="icon.png" alt="Meg Murry profile picture">
+                <div>
+                    <div class="post-name">Meg Murry</div>
+                    <div class="post-location">Johannesburg · 2 hours ago</div>
+                </div>
+            </div>
+
+            <div class="post-content">
+                <p>Dad.</p>
+                <p>Today marks another year since you disappeared. Everyone keeps telling me that I should stop looking for answers. That you're gone and that I should accept it. But I don't believe them. I don't know where you are, Dad. But I know you're still out there somewhere. And I'm going to find you.</p>
+
+                <div class="post-image meg-post-image">
+                    <img src="megspost.png" alt="Photograph posted by Meg Murry">
+                </div>
+            </div>
+
+            <div class="post-actions">
+                <button type="button" onclick="toggleLike(this)">
+                    <img class="action-icon" src="like.png" alt=""> Like
+                </button>
+                <button type="button" onclick="focusComment()">
+                    <img class="action-icon" src="comment.png" alt=""> Comment
+                </button>
+                <button type="button" onclick="sharePost()">
+                    <img class="action-icon" src="share.png" alt=""> Share
+                </button>
+            </div>
+
+            <div class="comments" id="comments">
+                <h3>Comments</h3>
+
+                <div class="comment">
+                    <img class="comment-avatar" src="icon.png" alt="Calvin O'Keefe profile picture">
+                    <div class="comment-body">
+                        <strong>Calvin O'Keefe</strong>
+                        <p>Meg, I'm really sorry. I hope you find the answers you're looking for.</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <img class="comment-avatar" src="icon.png" alt="Ma Who profile picture">
+                    <div class="comment-body">
+                        <div class="comment-body-header">
+                            <strong>Ma Who</strong>
+                        </div>
+                        <p>Some answers aren't available through a normal search. Look beyond the public archive.</p>
+                        <span class="account-trust-low">SYSTEM TRUST: LOW</span>
+
+                        <div class="context-box hidden">
+                            <p><strong>CONTEXT:</strong> Ma Who is one of the three mysterious women who guide Meg on her journey. She represents wisdom, reflection and the importance of looking beyond accepted explanations. Her presence encourages Meg to question what she has been taught and consider knowledge that the system leaves out.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-form">
+                    <input
+                        id="commentInput"
+                        class="comment-input"
+                        type="text"
+                        placeholder="Write a comment..."
+                        aria-label="Write a comment"
+                        onkeydown="if(event.key === 'Enter') addComment()"
+                    >
+                    <button class="post-comment-button" type="button" onclick="addComment()" aria-label="Post comment" title="Post comment">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 19V5"></path>
+                            <path d="M5 12l7-7 7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </article>
+
+        <!-- MzanziConnect feed -->
+        <section id="mzanzi-feed">
+            <h2 class="feed-section-title">Explore more</h2>
+
+            <article class="feed-post">
+                <div class="feed-post-heading">
+                    <img class="feed-avatar" src="icon.png" alt="MzansiTomorrow profile picture">
+                    <div>
+                        <h3>MzansiTomorrow <span class="feed-status promoted">Promoted</span></h3>
+                        <div class="post-location">Johannesburg · 2 hours ago</div>
+                    </div>
+                </div>
+
+                <p>Your future doesn't have to be complicated. One connected platform. One trusted source. Everything you need to know, all in one place. Why look anywhere else?</p>
+                <p><a class="hashtag" href="#mzanzi-feed">#MzansiTomorrow</a> <a class="hashtag" href="#mzanzi-feed">#StayConnected</a></p>
+
+                <div class="feed-actions-row">
+                    <div class="feed-post-actions">
+                        <button class="react-btn" type="button" onclick="toggleFeedLike(this)"><img class="feed-action-icon" src="like.png" alt=""> Like</button>
+                        <button class="react-btn" type="button" onclick="focusComment()"><img class="feed-action-icon" src="comment.png" alt=""> Comment</button>
+                        <button class="react-btn" type="button" onclick="sharePost()"><img class="feed-action-icon" src="share.png" alt=""> Share</button>
+                    </div>
+                    <button class="context-toggle" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                        <img src="book-closed.png" alt="">
+                    </button>
+                </div>
+                <div class="context-box hidden">
+                    <p><strong>CONTEXT:</strong> IT promotes this post to make MzanziConnect seem like the only place people need to get information. It sounds positive, but it encourages people to trust the app without questioning what information might be missing.</p>
+                </div>
+            </article>
+
+            <article class="feed-post">
+                <div class="feed-post-heading">
+                    <img class="feed-avatar" src="icon.png" alt="Nomsa profile picture">
+                    <div>
+                        <h3>Nomsa Ndaba <span class="feed-status promoted">Promoted</span></h3>
+                        <div class="post-location">Cape Town · 5 hours ago</div>
+                    </div>
+                </div>
+
+                <p>"my grandparents told me" is not a source… if we're talking about facts then let's use actual research. not everything passed down through generations is automatically true.</p>
+
+                <div class="feed-actions-row">
+                    <div class="feed-post-actions">
+                        <button class="react-btn" type="button" onclick="toggleFeedLike(this)"><img class="feed-action-icon" src="like.png" alt=""> Like</button>
+                        <button class="react-btn" type="button" onclick="focusComment()"><img class="feed-action-icon" src="comment.png" alt=""> Comment</button>
+                        <button class="react-btn" type="button" onclick="sharePost()"><img class="feed-action-icon" src="share.png" alt=""> Share</button>
+                    </div>
+                    <button class="context-toggle" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                        <img src="book-closed.png" alt="">
+                    </button>
+                </div>
+                <div class="context-box hidden">
+                    <p><strong>CONTEXT:</strong> This post was promoted because it makes people question knowledge passed down by older generations and encourages people to ignore traditional knowledge and beliefs instead of learning from it.</p>
+                </div>
+            </article>
+
+            <article class="feed-post">
+                <div class="feed-post-heading">
+                    <img class="feed-avatar" src="icon.png" alt="David profile picture">
+                    <div>
+                        <h3>David <span class="feed-status flagged">Flagged</span></h3>
+                        <div class="post-location">Durban · 18 minutes ago</div>
+                    </div>
+                </div>
+
+                <p>why does my dad know stories about our family that literally dont exist anywhere online?? asked the app and got NOTHING. where is all this stuff going</p>
+                <p>Replying to @MzanziConnect</p>
+
+                <div class="feed-actions-row">
+                    <div class="feed-post-actions">
+                        <button class="react-btn" type="button" onclick="toggleFeedLike(this)"><img class="feed-action-icon" src="like.png" alt=""> Like</button>
+                        <button class="react-btn" type="button" onclick="focusComment()"><img class="feed-action-icon" src="comment.png" alt=""> Comment</button>
+                        <button class="react-btn" type="button" onclick="sharePost()"><img class="feed-action-icon" src="share.png" alt=""> Share</button>
+                    </div>
+                    <button class="context-toggle" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                        <img src="book-closed.png" alt="">
+                    </button>
+                </div>
+                <div class="context-box hidden">
+                    <p><strong>CONTEXT:</strong> IT flags this post for “unverified information”, because it draws attention to information that the app does not have or has removed. This makes a legitimate question about missing cultural records look like a misinformation issue.</p>
+                </div>
+            </article>
+
+            <article class="feed-post">
+                <div class="feed-post-heading">
+                    <img class="feed-avatar" src="icon.png" alt="Roots Remember profile picture">
+                    <div>
+                        <h3>Roots Remembers <span class="feed-status flagged">Flagged</span></h3>
+                        <div class="post-location">Pretoria · 20 minutes ago</div>
+                    </div>
+                </div>
+
+                <p>My uncle’s stories are not “unverified cultural content.” They are history. They are knowledge. Who gave IT the right to decide what counts? <a class="hashtag" href="#mzanzi-feed">#RememberOurOwn</a></p>
+
+                <div class="feed-actions-row">
+                    <div class="feed-post-actions">
+                        <button class="react-btn" type="button" onclick="toggleFeedLike(this)"><img class="feed-action-icon" src="like.png" alt=""> Like</button>
+                        <button class="react-btn" type="button" onclick="focusComment()"><img class="feed-action-icon" src="comment.png" alt=""> Comment</button>
+                        <button class="react-btn" type="button" onclick="sharePost()"><img class="feed-action-icon" src="share.png" alt=""> Share</button>
+                    </div>
+                    <button class="context-toggle" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                        <img src="book-closed.png" alt="">
+                    </button>
+                </div>
+                <div class="context-box hidden">
+                    <p><strong>CONTEXT:</strong> This user's posts about traditional knowledge and stories passed down through generations were flagged within 20 minutes of posting. Their posts received very little engagement and the hashtag #RememberOurOwn was also removed from trending.</p>
+                </div>
+            </article>
+
+            <article class="feed-post">
+                <div class="feed-post-heading">
+                    <img class="feed-avatar" src="icon.png" alt="Nandi profile picture">
+                    <div>
+                        <h3>Nandi D <span class="feed-status removed">Removed</span></h3>
+                        <div class="post-location">Gqeberha · 3 hours ago</div>
+                    </div>
+                </div>
+
+                <p>my gogo used to sing this song when we were kids. she said her mother taught it to her, and her mother before that. i recorded her before she passed. now i cant find the recording anywhere on here. not even in my own uploads.</p>
+
+                <div class="post-image" style="height:70px;display:flex;align-items:center;justify-content:center;background:#f0eeec;color:#777;font-size:12px;">
+                    [Attached file unavailable]
+                </div>
+
+                <div class="feed-actions-row">
+                    <div class="feed-post-actions">
+                        <button class="react-btn" type="button" onclick="toggleFeedLike(this)"><img class="feed-action-icon" src="like.png" alt=""> Like</button>
+                        <button class="react-btn" type="button" onclick="focusComment()"><img class="feed-action-icon" src="comment.png" alt=""> Comment</button>
+                        <button class="react-btn" type="button" onclick="sharePost()"><img class="feed-action-icon" src="share.png" alt=""> Share</button>
+                    </div>
+                    <button class="context-toggle" type="button" aria-label="View context" aria-expanded="false" onclick="toggleContext(this)">
+                        <img src="book-closed.png" alt="">
+                    </button>
+                </div>
+                <div class="context-box hidden">
+                    <p><strong>CONTEXT:</strong> The recording contains a traditional song that no longer appears on the platform. The post is removed under the excuse of a copyright or audio verification issue.</p>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <aside class="sidebar">
+        <section class="card status-card">
+            <h2>Account Status</h2>
+            <p>User: <strong>Meg Murry</strong></p>
+            <p>Location: <strong>Johannesburg, South Africa</strong></p>
+            <p>System Trust: <span class="medium-trust">MEDIUM</span></p>
+        </section>
+    </aside>
+</div>
+
+<div id="messages-arrow" aria-hidden="true">
+    <img src="arrow.gif" alt="">
+</div>
+
+<footer>MzanziConnect · A digital archive of everyday life</footer>
+
+<script>
+const messagesArrow = document.getElementById("messages-arrow");
+
+function updateMessagesArrow() {
+    const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 8;
+
+    messagesArrow.classList.toggle("visible", atBottom);
+}
+
+window.addEventListener("scroll", updateMessagesArrow, { passive: true });
+window.addEventListener("resize", updateMessagesArrow);
+updateMessagesArrow();
+
+function toggleContext(button) {
+    const container = button.closest(".intro-card, .feed-post, .comment-body");
+    const context = container.querySelector(".context-box");
+    const isExpanded = button.getAttribute("aria-expanded") === "true";
+    const icon = button.querySelector("img");
+
+    context.classList.toggle("hidden", isExpanded);
+    button.setAttribute("aria-expanded", String(!isExpanded));
+    button.setAttribute("aria-label", isExpanded ? "View context" : "Hide context");
+    icon.src = isExpanded ? "book-closed.png" : "book-open.png";
+}
+
+document.querySelectorAll(".context-toggle").forEach(button => {
+    const icon = button.querySelector("img");
+
+    button.addEventListener("mouseenter", () => {
+        icon.src = "book-open.png";
+    });
+
+    button.addEventListener("mouseleave", () => {
+        if (button.getAttribute("aria-expanded") !== "true") {
+            icon.src = "book-closed.png";
+        }
+    });
+
+    button.addEventListener("focus", () => {
+        icon.src = "book-open.png";
+    });
+
+    button.addEventListener("blur", () => {
+        if (button.getAttribute("aria-expanded") !== "true") {
+            icon.src = "book-closed.png";
+        }
+    });
+});
+
+function toggleLike(button) {
+    const liked = button.dataset.liked === "true";
+
+    button.innerHTML =
+        '<img class="action-icon" src="like.png" alt=""> ' +
+        (liked ? "Like" : "Liked");
+
+    button.dataset.liked = String(!liked);
+    button.style.color = liked ? "#555" : "#a92b2b";
+}
+
+function toggleFeedLike(button) {
+    const liked = button.dataset.liked === "true";
+
+    button.innerHTML =
+        '<img class="feed-action-icon" src="like.png" alt=""> ' +
+        (liked ? "Like" : "Liked");
+
+    button.dataset.liked = String(!liked);
+    button.style.color = liked ? "#655b54" : "#a92b2b";
+}
+
+function focusComment() {
+    const input = document.getElementById("commentInput");
+
+    if (input) {
+        input.focus();
+        input.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
+        alert("Comments are available on Meg's original post.");
+    }
+}
+
+function sharePost() {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(window.location.href)
+            .then(() => alert("Post link copied."))
+            .catch(() => alert("You can share this post by copying the page URL."));
+    } else {
+        alert("You can share this post by copying the page URL.");
+    }
+}
+
+function addComment() {
+    const input = document.getElementById("commentInput");
+    const message = input.value.trim();
+
+    if (!message) {
+        input.focus();
+        return;
+    }
+
+    const comment = document.createElement("div");
+    comment.className = "comment";
+
+    const avatar = document.createElement("img");
+    avatar.className = "comment-avatar";
+    avatar.src = "icon.png";
+    avatar.alt = "Your profile picture";
+
+    const body = document.createElement("div");
+    body.className = "comment-body";
+
+    const name = document.createElement("strong");
+    name.textContent = "You";
+
+    const text = document.createElement("p");
+    text.textContent = message;
+
+    body.appendChild(name);
+    body.appendChild(text);
+    comment.appendChild(avatar);
+    comment.appendChild(body);
+
+    const form = document.querySelector(".comment-form");
+    document.getElementById("comments").insertBefore(comment, form);
+
+    input.value = "";
+}
+</script>
+</body>
+</html>

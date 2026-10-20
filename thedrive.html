@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Drive</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #121210;
+      color: #f7f4ee;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+    }
+
+    button, input, textarea, select {
+      font-family: "Inter", sans-serif;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 21% 1fr;
+      gap: 3%;
+      padding: 8vh 3vw 10vh;
+      min-height: 100vh;
+    }
+
+    .intro {
+      padding-top: 2vh;
+    }
+
+    .intro h1 {
+      font-size: clamp(2.2rem, 3.1vw, 3.3rem);
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.065em;
+      margin-bottom: 4.5vh;
+    }
+
+    .intro p {
+      font-size: clamp(0.68rem, 0.78vw, 0.8rem);
+      line-height: 1.55;
+      font-weight: 400;
+      max-width: 205px;
+      color: #d0cbc1;
+    }
+
+    /* Archive gallery */
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 1.8vw;
+      row-gap: 4vh;
+      align-content: start;
+    }
+
+    .gallery-item {
+      min-width: 0;
+      text-align: left;
+    }
+
+    .image-button {
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      border-radius: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1.58 / 1;
+      object-fit: cover;
+      border: 5px solid #ded7c5;
+      border-radius: 4px;
+      background: #ded6c3;
+      transition:
+        transform 250ms ease,
+        filter 250ms ease,
+        box-shadow 250ms ease;
+      will-change: transform;
+    }
+
+    .image-button:hover img {
+      transform: translateY(-3px) scale(1.015);
+      filter: brightness(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .image-button:active img {
+      transform: translateY(-1px) scale(0.99);
+      transition-duration: 100ms;
+    }
+
+    .image-button:focus-visible {
+      outline: 2px solid #809c66;
+      outline-offset: 4px;
+    }
+
+    .caption {
+      margin-top: 0.8vh;
+      pointer-events: none;
+    }
+
+    .caption h2 {
+      font-size: clamp(0.8rem, 1.1vw, 1.1rem);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+      margin-bottom: 0.5vh;
+      text-transform: uppercase;
+    }
+
+    .caption p {
+      font-size: clamp(0.63rem, 0.72vw, 0.75rem);
+      font-weight: 400;
+      line-height: 1.5;
+      color: #c5c0b6;
+      max-width: 230px;
+    }
+
+    /* Corner navigation icons */
+
+    .page-navigation {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      pointer-events: none;
+    }
+
+    .page-arrow {
+      position: absolute;
+      display: block;
+      width: 29px;
+      height: 29px;
+      padding: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      box-shadow: none;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .page-arrow img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border: none;
+      background: transparent;
+    }
+
+    .page-arrow:hover {
+      transform: scale(1.08);
+      opacity: 0.8;
+    }
+
+    .page-arrow:active {
+      transform: scale(0.94);
+    }
+
+    .page-arrow:focus-visible {
+      outline: 2px solid #809c66;
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    .arrow-back {
+      top: 20px;
+      left: 20px;
+    }
+
+    .arrow-next {
+      right: 20px;
+      bottom: 20px;
+    }
+
+    /* Standard archive popup */
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.66);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 250ms ease, visibility 250ms ease;
+    }
+
+    .popup-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .popup {
+      position: relative;
+      width: min(100%, 390px);
+      min-height: 250px;
+      padding: 45px 38px;
+      background-color: transparent;
+      background-image: url("paper-home.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 110% 110%;
+      color: #171b13;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      transform: translateY(12px) scale(0.98);
+      opacity: 0;
+      transition: transform 250ms ease, opacity 250ms ease;
+    }
+
+    .popup-overlay.active .popup {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 20px;
+      right: 23px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(23, 27, 19, 0.1);
+      color: #171b13;
+      font-size: 19px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 200ms ease, transform 200ms ease;
+    }
+
+    .popup-close:hover {
+      background: rgba(23, 27, 19, 0.18);
+      transform: rotate(90deg);
+    }
+
+    .popup-label {
+      display: block;
+      margin-bottom: 14px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    .popup h2 {
+      max-width: 90%;
+      margin-bottom: 13px;
+      font-size: clamp(1.6rem, 3vw, 2.1rem);
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .popup-description {
+      font-size: 0.8rem;
+      line-height: 1.65;
+      font-weight: 400;
+      max-width: 340px;
+    }
+
+    /* Dr. Alex Murry image viewer */
+
+    .murry-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 250ms ease, visibility 250ms ease;
+    }
+
+    .murry-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .murry-viewer {
+      position: relative;
+      width: min(1100px, 96vw);
+      height: min(90vh, 850px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      transform: scale(0.98);
+      opacity: 0;
+      transition: transform 250ms ease, opacity 250ms ease;
+    }
+
+    .murry-overlay.active .murry-viewer {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .murry-image {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border: none !important;
+      border-radius: 0 !important;
+      outline: none;
+      box-shadow: none !important;
+      background: transparent !important;
+      user-select: none;
+      -webkit-user-drag: none;
+      animation: imageAppear 250ms ease;
+    }
+
+    @keyframes imageAppear {
+      from {
+        opacity: 0.5;
+        transform: translateX(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .murry-arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 2;
+      width: 33px;
+      height: 33px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateY(-50%);
+      border: none;
+      border-radius: 50%;
+      background: rgba(247, 244, 238, 0.12);
+      color: #f7f4ee;
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 200ms ease, transform 200ms ease;
+    }
+
+    .murry-arrow:hover {
+      background: rgba(247, 244, 238, 0.25);
+    }
+
+    .murry-arrow:active {
+      transform: translateY(-50%) scale(0.92);
+    }
+
+    .murry-prev {
+      left: -45px;
+    }
+
+    .murry-next {
+      right: -45px;
+    }
+
+    .murry-close {
+      position: fixed;
+      top: 20px;
+      right: 22px;
+      z-index: 3;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: rgba(247, 244, 238, 0.12);
+      color: #f7f4ee;
+      font-size: 23px;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 200ms ease, transform 200ms ease;
+    }
+
+    .murry-close:hover {
+      background: rgba(247, 244, 238, 0.25);
+      transform: rotate(90deg);
+    }
+
+    /* Responsive layout */
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 4vh;
+        padding: 70px 22px 85px;
+      }
+
+      .intro {
+        padding-top: 0;
+      }
+
+      .intro h1 {
+        font-size: clamp(2.4rem, 8vw, 3.7rem);
+        margin-bottom: 18px;
+      }
+
+      .intro p {
+        max-width: 300px;
+        font-size: 0.82rem;
+      }
+
+      .gallery {
+        column-gap: 18px;
+        row-gap: 28px;
+      }
+
+      .caption h2 {
+        font-size: clamp(0.8rem, 2vw, 1rem);
+      }
+
+      .caption p {
+        font-size: 0.72rem;
+      }
+
+      .murry-viewer {
+        width: 94vw;
+        height: 88vh;
+      }
+
+      .murry-prev {
+        left: -38px;
+      }
+
+      .murry-next {
+        right: -38px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .layout {
+        padding: 65px 18px 80px;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 13px;
+        row-gap: 24px;
+      }
+
+      .caption h2 {
+        font-size: 0.82rem;
+      }
+
+      .caption p {
+        font-size: 0.68rem;
+      }
+
+      .page-arrow {
+        width: 26px;
+        height: 26px;
+      }
+
+      .arrow-back {
+        top: 14px;
+        left: 14px;
+      }
+
+      .arrow-next {
+        right: 14px;
+        bottom: 14px;
+      }
+
+      .popup-overlay {
+        padding: 16px;
+      }
+
+      .popup {
+        width: min(100%, 390px);
+        min-height: 230px;
+        padding: 40px 30px;
+      }
+
+      .popup-close {
+        top: 17px;
+        right: 18px;
+      }
+
+      .popup h2 {
+        font-size: 1.8rem;
+      }
+
+      .popup-description {
+        font-size: 0.76rem;
+      }
+
+      .murry-overlay {
+        padding: 12px;
+      }
+
+      .murry-viewer {
+        width: 100%;
+        height: 84vh;
+      }
+
+      .murry-arrow {
+        width: 30px;
+        height: 30px;
+        font-size: 19px;
+        background: rgba(0, 0, 0, 0.45);
+      }
+
+      .murry-prev {
+        left: 5px;
+      }
+
+      .murry-next {
+        right: 5px;
+      }
+
+      .murry-close {
+        top: 12px;
+        right: 12px;
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Corner navigation -->
+  <nav class="page-navigation" aria-label="Page navigation">
+    <a
+      class="page-arrow arrow-back"
+      href="https://github.com/the-things-we-were-never-told/transmedia/messages.html"
+      aria-label="Back to desktop"
+      title="Back to desktop"
+    >
+      <img src="arrow-back.png" alt="">
+    </a>
+
+    <a
+      class="page-arrow arrow-next"
+      href="megsthoughts.html"
+      aria-label="Next page: Meg's Thoughts"
+      title="Meg's Thoughts"
+    >
+      <img src="arrow-next.png" alt="">
+    </a>
+  </nav>
+
+  <main class="layout">
+
+    <header class="intro">
+      <h1>TheDrive</h1>
+      <p>
+        An archive of photographs, music, history and knowledge that has been removed or restricted by Mzanzi Connect.
+      </p>
+    </header>
+
+    <section class="gallery" aria-label="Archive categories">
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="photographs" aria-label="View Photographs archive">
+          <img src="thedrive_1.png" alt="Photographs archive">
+        </button>
+        <div class="caption">
+          <h2>Photographs</h2>
+          <p>Personal and community photographs.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="music" aria-label="View Music archive">
+          <img src="thedrive_2.png" alt="Music archive">
+        </button>
+        <div class="caption">
+          <h2>Music</h2>
+          <p>Removed recordings and music archives.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="history" aria-label="View History archive">
+          <img src="thedrive_3.png" alt="History archive">
+        </button>
+        <div class="caption">
+          <h2>History</h2>
+          <p>Records of events and forgotten histories.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="ancestry" aria-label="View Ancestry archive">
+          <img src="thedrive_4.png" alt="Ancestry archive">
+        </button>
+        <div class="caption">
+          <h2>Ancestry</h2>
+          <p>Family histories and community records.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="knowledge" aria-label="View Knowledge archive">
+          <img src="thedrive_5.png" alt="Knowledge archive">
+        </button>
+        <div class="caption">
+          <h2>Knowledge</h2>
+          <p>Indigenous knowledge and research.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="language" aria-label="View Language archive">
+          <img src="thedrive_6.png" alt="Language archive">
+        </button>
+        <div class="caption">
+          <h2>Language</h2>
+          <p>Language records removed from education.</p>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <button class="image-button" data-category="dr-murry" aria-label="View Dr. Alex Murry archive">
+          <img src="thedrive_7.png" alt="Dr. Alex Murry's personal research archive">
+        </button>
+        <div class="caption">
+          <h2>Dr. Alex Murry</h2>
+          <p>Personal research and documents belonging to Dr. Murry.</p>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <!-- Standard archive popup -->
+
+  <div class="popup-overlay" id="popupOverlay" aria-hidden="true">
+    <section
+      class="popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="popupTitle"
+      aria-describedby="popupDescription"
+    >
+      <button class="popup-close" id="popupClose" aria-label="Close popup">&times;</button>
+      <span class="popup-label">The Drive / Archive File</span>
+      <h2 id="popupTitle">Photographs</h2>
+      <p class="popup-description" id="popupDescription"></p>
+    </section>
+  </div>
+
+  <!-- Dr. Alex Murry image viewer -->
+
+  <div class="murry-overlay" id="murryOverlay" aria-hidden="true">
+    <button class="murry-close" id="murryClose" aria-label="Close image viewer">&times;</button>
+
+    <div class="murry-viewer" id="murryViewer">
+      <button class="murry-arrow murry-prev" id="murryPrev" aria-label="Previous image">&#8592;</button>
+
+      <img class="murry-image" id="murryImage" src="achive-1.png" alt="Dr. Murry archive document">
+
+      <button class="murry-arrow murry-next" id="murryNext" aria-label="Next image">&#8594;</button>
+    </div>
+  </div>
+
+  <script>
+    const archiveInfo = {
+      photographs: {
+        title: "Photographs",
+        description: "A collection of photographs documenting families, communities, places and cultural events. Several photographs were removed from public archives after being classified as unnecessary or outdated."
+      },
+
+      music: {
+        title: "Music",
+        description: "Catalogue for a collection of traditional songs recorded by community musicians before the recordings were removed from MzanziConnect's music library by IT. The catalogue lists song titles, performers, and the communities they belong to."
+      },
+
+      history: {
+        title: "History",
+        description: "Records of local events, community histories and historical accounts that became difficult to find through the Mzanzi Connect search system."
+      },
+
+      ancestry: {
+        title: "Ancestry",
+        description: "Family trees, oral histories and records showing connections between families and communities. Some records were removed because they could not be verified by the official system."
+      },
+
+      knowledge: {
+        title: "Knowledge",
+        description: "Notes and records of indigenous knowledge passed between generations. The archive contains information about plants, practices, local environments and community knowledge."
+      },
+
+      language: {
+        title: "Language",
+        description: "Documents containing language records, translations, oral histories and educational material in African languages. Some of these materials became difficult to access through Mzanzi Connect."
+      }
+    };
+
+    const overlay = document.getElementById("popupOverlay");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupDescription = document.getElementById("popupDescription");
+    const closeButton = document.getElementById("popupClose");
+    const imageButtons = document.querySelectorAll(".image-button");
+
+    const murryOverlay = document.getElementById("murryOverlay");
+    const murryViewer = document.getElementById("murryViewer");
+    const murryImage = document.getElementById("murryImage");
+    const murryClose = document.getElementById("murryClose");
+    const murryPrev = document.getElementById("murryPrev");
+    const murryNext = document.getElementById("murryNext");
+
+    /* Only two Dr. Murry archive slides */
+    const murryImages = [
+      "achive-1.png",
+      "achive-2.png"
+    ];
+
+    let currentMurryImage = 0;
+    let lastFocusedElement = null;
+    let touchStartX = 0;
+
+    function openPopup(category) {
+      if (category === "dr-murry") {
+        openMurryViewer();
+        return;
+      }
+
+      const info = archiveInfo[category];
+      if (!info) return;
+
+      lastFocusedElement = document.activeElement;
+
+      popupTitle.textContent = info.title;
+      popupDescription.textContent = info.description;
+
+      overlay.classList.add("active");
+      overlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      closeButton.focus();
+    }
+
+    function closePopup() {
+      overlay.classList.remove("active");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+
+      if (lastFocusedElement) {
+        lastFocusedElement.focus();
+      }
+    }
+
+    function openMurryViewer() {
+      lastFocusedElement = document.activeElement;
+      currentMurryImage = 0;
+      showMurryImage();
+
+      murryOverlay.classList.add("active");
+      murryOverlay.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      murryClose.focus();
+    }
+
+    function closeMurryViewer() {
+      murryOverlay.classList.remove("active");
+      murryOverlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+
+      if (lastFocusedElement) {
+        lastFocusedElement.focus();
+      }
+    }
+
+    function showMurryImage() {
+      murryImage.style.animation = "none";
+      void murryImage.offsetWidth;
+      murryImage.style.animation = "";
+
+      murryImage.src = murryImages[currentMurryImage];
+      murryImage.alt = "Dr. Murry archive document " + (currentMurryImage + 1);
+    }
+
+    function nextMurryImage() {
+      currentMurryImage = (currentMurryImage + 1) % murryImages.length;
+      showMurryImage();
+    }
+
+    function previousMurryImage() {
+      currentMurryImage =
+        (currentMurryImage - 1 + murryImages.length) % murryImages.length;
+
+      showMurryImage();
+    }
+
+    imageButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        openPopup(button.dataset.category);
+      });
+    });
+
+    closeButton.addEventListener("click", closePopup);
+
+    overlay.addEventListener("click", event => {
+      if (event.target === overlay) {
+        closePopup();
+      }
+    });
+
+    murryClose.addEventListener("click", closeMurryViewer);
+    murryPrev.addEventListener("click", previousMurryImage);
+    murryNext.addEventListener("click", nextMurryImage);
+
+    murryOverlay.addEventListener("click", event => {
+      if (event.target === murryOverlay) {
+        closeMurryViewer();
+      }
+    });
+
+    /* Swipe through images on touchscreens */
+
+    murryViewer.addEventListener("touchstart", event => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+
+    murryViewer.addEventListener("touchend", event => {
+      const touchEndX = event.changedTouches[0].screenX;
+      const swipeDistance = touchEndX - touchStartX;
+
+      if (Math.abs(swipeDistance) > 45) {
+        if (swipeDistance < 0) {
+          nextMurryImage();
+        } else {
+          previousMurryImage();
+        }
+      }
+    }, { passive: true });
+
+    document.addEventListener("keydown", event => {
+      if (overlay.classList.contains("active")) {
+        if (event.key === "Escape") closePopup();
+        return;
+      }
+
+      if (murryOverlay.classList.contains("active")) {
+        if (event.key === "Escape") closeMurryViewer();
+        if (event.key === "ArrowRight") nextMurryImage();
+        if (event.key === "ArrowLeft") previousMurryImage();
+      }
+    });
+  </script>
+
+</body>
+</html>
